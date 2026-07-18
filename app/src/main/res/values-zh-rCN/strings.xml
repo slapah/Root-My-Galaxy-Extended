@@ -3,7 +3,7 @@
     <string name="app_name">Root My Galaxy</string><string name="nav_overview">主页</string><string name="nav_history">运行记录</string><string name="nav_settings">设置</string>
     <string name="install_confirm_title">安装 KernelSU？</string><string name="install_confirm_body">应用将验证支持配置，然后从 GitHub 下载并运行已签名的 exploit 与 KernelSU payload。</string>
     <string name="action_confirm">确认</string><string name="action_cancel">取消</string><string name="action_close">关闭</string><string name="action_retry">重试</string><string name="action_done">完成</string><string name="action_back">返回</string>
-    <string name="install_active_until_reboot">下次重启前保持启用</string><string name="install_tap_retry">点击重试</string><string name="install_tap_start">点击安装 KernelSU</string>
+    <string name="install_tap_manager">点击安装 KernelSU Manager</string><string name="install_tap_retry">点击重试</string><string name="install_tap_start">点击安装 KernelSU</string>
     <string name="device">设备</string><string name="firmware">固件</string><string name="system">系统</string><string name="system_abi">系统 ABI</string>
     <string name="settings">设置</string><string name="version_format">%1$s (%2$d)</string><string name="language">语言</string><string name="language_description">选择应用语言</string><string name="appearance">外观</string><string name="theme_system">系统</string><string name="theme_light">浅色</string><string name="theme_dark">深色</string><string name="material_color">Material 颜色</string><string name="material_color_description">选择界面强调色</string>
     <string name="language_system">跟随系统</string>
