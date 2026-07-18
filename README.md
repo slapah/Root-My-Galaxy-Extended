@@ -6,26 +6,14 @@ Root My Galaxy is a one-click installer for explicitly
 supported Samsung firmware builds. The application itself is kept separate
 from device offsets, native exploit payloads, and KernelSU build artifacts.
 
+The signed device feed and native payloads are maintained in
+[Root-My-Galaxy-Payloads](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads).
+
+## Application
 
 <img width="200" alt="KakaoTalk_20260718_170922353" src="https://github.com/user-attachments/assets/3f562ea4-8c39-4ade-bfd3-93eea1a1cc24" />
 <img width="200" alt="KakaoTalk_20260718_171127319" src="https://github.com/user-attachments/assets/8dde0443-12cf-4058-ba76-0337aefb92a0" />
 <img width="200" alt="KakaoTalk_20260718_171030202" src="https://github.com/user-attachments/assets/f656e8af-60a6-4fcb-a3db-d4232bede613" />
-
-<br/>
-
-
-
-The signed device feed and native payloads are maintained in
-[Root-My-Galaxy-Payloads](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads).
-The standalone CVE proof of concept remains in
-[CVE-2026-43499-S25U](https://github.com/BuSung-dev/CVE-2026-43499-S25U).
-
-## Current target
-
-```text
-Samsung Galaxy S25 Ultra SM-S938N
-pa3q / S938NKSUACZF1 / Android 16 / arm64-v8a / 4K
-```
 
 The app requires an exact signed match for the manufacturer, model, device,
 full build display ID, full fingerprint, SDK, ABI, and page size.
