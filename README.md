@@ -1,44 +1,28 @@
 # Root My Galaxy
 
-Root My Galaxy is a Jetpack Compose one-click installer for explicitly
+<img width="108" height="108" alt="sprout_icon_108" src="https://github.com/user-attachments/assets/2ba0e360-0876-489c-b256-f75df7589785" />
+
+
+Root My Galaxy is a one-click installer for explicitly
 supported Samsung firmware builds. The application itself is kept separate
 from device offsets, native exploit payloads, and KernelSU build artifacts.
 
+
+[Latest release](https://github.com/BuSung-dev/Root-My-Galaxy/releases)
+
 The signed device feed and native payloads are maintained in
 [Root-My-Galaxy-Payloads](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads).
-The standalone CVE proof of concept remains in
-[CVE-2026-43499-S25U](https://github.com/BuSung-dev/CVE-2026-43499-S25U).
 
-## Current profiles
+## Application
 
-```text
-Galaxy S25 Ultra / 6.6.98-android15-8-pd6ff1cd-abogkiS938NKSUACZF1-4k
-Galaxy S24 FE / 6.1.157-android14-11
-```
+
+<img width="200" alt="KakaoTalk_20260718_170922353" src="https://github.com/user-attachments/assets/3f562ea4-8c39-4ade-bfd3-93eea1a1cc24" />
+<img width="200" alt="KakaoTalk_20260718_171127319" src="https://github.com/user-attachments/assets/8dde0443-12cf-4058-ba76-0337aefb92a0" />
+<img width="200" alt="KakaoTalk_20260718_171030202" src="https://github.com/user-attachments/assets/f656e8af-60a6-4fcb-a3db-d4232bede613" />
 
 The app automatically selects an exact signed match for the kernel release,
 full build display ID, SDK, ABI, and page size. Advanced mode can select a
 profile manually and presents separate kernel-release and build warnings.
-
-## Download model
-
-1. Resolve the current `main` commit of the payload repository.
-2. Download the support manifest and Ed25519 signature from that exact commit.
-3. Verify the signature with the public key pinned in the APK.
-4. Match the kernel release and exact automatic-selection fields.
-5. Download the exploit and KernelSU artifacts from the same immutable commit.
-
-Per-artifact SHA-256 fields are intentionally not used. The signed manifest
-and immutable Git commit are the trust and consistency boundaries.
-
-## Interface
-
-- Material 3 Expressive UI
-- Tonal Spot palettes generated with the Material Color Utilities 2025 spec
-- overview and settings navigation
-- system dynamic, blue, violet, green, and orange Material palettes
-- Korean, English, Japanese, and Simplified Chinese app languages
-- dedicated non-dismissible installation screen with live native logs
 
 ## Build
 
