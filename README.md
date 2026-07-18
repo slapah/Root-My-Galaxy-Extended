@@ -6,6 +6,9 @@ Root My Galaxy is a one-click installer for explicitly
 supported Samsung firmware builds. The application itself is kept separate
 from device offsets, native exploit payloads, and KernelSU build artifacts.
 
+
+[![Latest release](https://img.shields.io/github/v/release/tiann/Root-My-Galaxy?label=Release&logo=github)](https://github.com/BuSung-dev/Root-My-Galaxy/releases)
+
 The signed device feed and native payloads are maintained in
 [Root-My-Galaxy-Payloads](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads).
 
