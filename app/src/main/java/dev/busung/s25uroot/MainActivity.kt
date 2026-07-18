@@ -200,6 +200,9 @@ private val languageOptions = listOf(
     LanguageOption(R.string.language_chinese, "zh-CN"),
 )
 
+private const val KERNEL_SU_MANAGER_URL =
+    "https://github.com/tiann/KernelSU/releases/download/v3.2.5/KernelSU_v3.2.5_32525-release.apk"
+
 @Composable
 private fun RootApp(
     installViewModel: InstallViewModel,
@@ -333,6 +336,7 @@ private fun RootApp(
                     NavigationBarItem(
                         selected = selectedPage == page,
                         onClick = { selectedPage = page },
+                        modifier = Modifier.padding(top = 4.dp),
                         icon = { Icon(page.icon, contentDescription = null) },
                         label = { Text(stringResource(page.label)) },
                     )
@@ -394,7 +398,7 @@ private fun OverviewPage(
             Text(
                 text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(top = 20.dp, bottom = 14.dp),
+                modifier = Modifier.padding(top = 54.dp, bottom = 14.dp),
             )
         }
         item { InstallStatusCard(installState, onInstall) }
@@ -406,9 +410,14 @@ private fun OverviewPage(
 @Composable
 private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
+    val uriHandler = LocalUriHandler.current
     Card(
         onClick = {
-            if (!installState.busy && installState.phase != InstallPhase.Installed) onInstall()
+            when {
+                installState.busy -> Unit
+                installState.phase == InstallPhase.Installed -> uriHandler.openUri(KERNEL_SU_MANAGER_URL)
+                else -> onInstall()
+            }
         },
         modifier = Modifier.fillMaxWidth().animateContentSize(),
         shape = expressiveClickableCardShape(interactionSource),
@@ -445,7 +454,7 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
                 )
                 Text(
                     text = when (installState.phase) {
-                        InstallPhase.Installed -> stringResource(R.string.install_active_until_reboot)
+                        InstallPhase.Installed -> stringResource(R.string.install_tap_manager)
                         InstallPhase.Failed -> stringResource(R.string.install_tap_retry)
                         else -> stringResource(R.string.install_tap_start)
                     },
@@ -832,44 +841,48 @@ private fun SettingsPage(
                 )
             }
         }
-        item { SectionLabel(stringResource(R.string.language)) }
-        item {
-            SettingsCard(
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    languageMenuTop = with(density) { coordinates.positionInWindow().y.toDp() }
-                },
-                icon = Icons.Rounded.Language,
-                title = stringResource(R.string.language),
-                description = stringResource(R.string.language_description),
-                value = languageLabel(currentLanguageTag),
-                onClick = { showLanguageDialog = true },
-            )
-        }
         item { SectionLabel(stringResource(R.string.appearance)) }
         item {
             ThemeModeSelector(themeMode, onThemeModeChanged)
         }
         item {
-            SettingsCard(
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    colorMenuTop = with(density) { coordinates.positionInWindow().y.toDp() }
-                },
-                icon = Icons.Rounded.Palette,
-                title = stringResource(R.string.material_color),
-                description = stringResource(R.string.material_color_description),
-                value = accentLabel(accentColor),
-                onClick = { showColorDialog = true },
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                SettingsCard(
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        colorMenuTop = with(density) { coordinates.positionInWindow().y.toDp() }
+                    },
+                    icon = Icons.Rounded.Palette,
+                    title = stringResource(R.string.material_color),
+                    description = stringResource(R.string.material_color_description),
+                    value = accentLabel(accentColor),
+                    position = SettingsCardPosition.Top,
+                    onClick = { showColorDialog = true },
+                )
+                SettingsCard(
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        languageMenuTop = with(density) { coordinates.positionInWindow().y.toDp() }
+                    },
+                    icon = Icons.Rounded.Language,
+                    title = stringResource(R.string.language),
+                    description = stringResource(R.string.language_description),
+                    value = languageLabel(currentLanguageTag),
+                    position = SettingsCardPosition.Bottom,
+                    onClick = { showLanguageDialog = true },
+                )
+            }
         }
         item { SectionLabel(stringResource(R.string.advanced)) }
         item {
-            SettingsSwitchCard(
-                icon = Icons.Rounded.Memory,
-                title = stringResource(R.string.advanced_mode),
-                description = stringResource(R.string.advanced_mode_description),
-                checked = advancedMode,
-                onCheckedChange = onAdvancedModeChanged,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Memory,
+                    title = stringResource(R.string.advanced_mode),
+                    description = stringResource(R.string.advanced_mode_description),
+                    checked = advancedMode,
+                    position = SettingsCardPosition.GroupedSingle,
+                    onCheckedChange = onAdvancedModeChanged,
+                )
+            }
         }
     }
 }
@@ -1039,6 +1052,14 @@ private fun SectionLabel(text: String) {
     )
 }
 
+private enum class SettingsCardPosition {
+    Single,
+    GroupedSingle,
+    Top,
+    Middle,
+    Bottom,
+}
+
 @Composable
 private fun SettingsCard(
     modifier: Modifier = Modifier,
@@ -1046,13 +1067,14 @@ private fun SettingsCard(
     title: String,
     description: String,
     value: String,
+    position: SettingsCardPosition = SettingsCardPosition.Single,
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = expressiveClickableCardShape(interactionSource),
+        shape = expressiveClickableCardShape(interactionSource, position),
         interactionSource = interactionSource,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -1090,13 +1112,14 @@ private fun SettingsSwitchCard(
     title: String,
     description: String,
     checked: Boolean,
+    position: SettingsCardPosition = SettingsCardPosition.Single,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Card(
         onClick = { onCheckedChange(!checked) },
         modifier = Modifier.fillMaxWidth(),
-        shape = expressiveClickableCardShape(interactionSource),
+        shape = expressiveClickableCardShape(interactionSource, position),
         interactionSource = interactionSource,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -1136,6 +1159,9 @@ private fun ThemeModeSelector(
                 checked = themeMode == mode,
                 onCheckedChange = { onThemeModeChanged(mode) },
                 modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
+                colors = ToggleButtonDefaults.toggleButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                ),
                 shapes = when (index) {
                     0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                     themeModes.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
@@ -1161,17 +1187,41 @@ private fun ThemeModeSelector(
 @Composable
 private fun expressiveClickableCardShape(
     interactionSource: MutableInteractionSource,
+    position: SettingsCardPosition = SettingsCardPosition.Single,
 ): RoundedCornerShape {
     val pressed by interactionSource.collectIsPressedAsState()
-    val cornerRadius by animateDpAsState(
-        targetValue = if (pressed) 28.dp else 16.dp,
+    val topRadius by animateDpAsState(
+        targetValue = when {
+            pressed -> 28.dp
+            position == SettingsCardPosition.Single -> 16.dp
+            position in setOf(SettingsCardPosition.GroupedSingle, SettingsCardPosition.Top) -> 24.dp
+            else -> 6.dp
+        },
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioNoBouncy,
             stiffness = Spring.StiffnessMedium,
         ),
-        label = "clickable-card-corner",
+        label = "clickable-card-top-corner",
     )
-    return RoundedCornerShape(cornerRadius)
+    val bottomRadius by animateDpAsState(
+        targetValue = when {
+            pressed -> 28.dp
+            position == SettingsCardPosition.Single -> 16.dp
+            position in setOf(SettingsCardPosition.GroupedSingle, SettingsCardPosition.Bottom) -> 24.dp
+            else -> 6.dp
+        },
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium,
+        ),
+        label = "clickable-card-bottom-corner",
+    )
+    return RoundedCornerShape(
+        topStart = topRadius,
+        topEnd = topRadius,
+        bottomStart = bottomRadius,
+        bottomEnd = bottomRadius,
+    )
 }
 
 @Composable
