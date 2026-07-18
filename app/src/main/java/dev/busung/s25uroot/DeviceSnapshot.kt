@@ -8,6 +8,7 @@ data class DeviceSnapshot(
     val manufacturer: String,
     val model: String,
     val device: String,
+    val kernelRelease: String,
     val buildId: String,
     val fingerprint: String,
     val androidRelease: String,
@@ -16,13 +17,14 @@ data class DeviceSnapshot(
     val pageSize: Long,
 ) {
     val targetLabel: String
-        get() = "$model / $buildId"
+        get() = "$kernelRelease / $buildId"
 
     companion object {
         fun current() = DeviceSnapshot(
             manufacturer = Build.MANUFACTURER,
             model = Build.MODEL,
             device = Build.DEVICE,
+            kernelRelease = Os.uname().release,
             buildId = Build.DISPLAY,
             fingerprint = Build.FINGERPRINT,
             androidRelease = Build.VERSION.RELEASE,
