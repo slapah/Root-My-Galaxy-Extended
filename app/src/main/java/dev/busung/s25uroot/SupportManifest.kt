@@ -18,6 +18,7 @@ data class TargetProfile(
     val manufacturer: String,
     val model: String,
     val device: String,
+    val kernelRelease: String,
     val buildDisplay: String,
     val buildFingerprint: String,
     val sdk: Int,
@@ -26,15 +27,12 @@ data class TargetProfile(
     val exploit: RemoteArtifact,
     val kernelSu: KernelSuArtifact,
 ) {
-    fun matchesModel(snapshot: DeviceSnapshot): Boolean =
-        manufacturer.equals(snapshot.manufacturer, ignoreCase = true) &&
-            model == snapshot.model &&
-            device == snapshot.device
+    fun matchesKernel(snapshot: DeviceSnapshot): Boolean =
+        kernelRelease == snapshot.kernelRelease
 
     fun matches(snapshot: DeviceSnapshot): Boolean =
-        matchesModel(snapshot) &&
+        matchesKernel(snapshot) &&
             buildDisplay == snapshot.buildId &&
-            buildFingerprint == snapshot.fingerprint &&
             sdk == snapshot.sdk &&
             abi == snapshot.abi &&
             pageSize == snapshot.pageSize
@@ -61,6 +59,7 @@ data class SupportManifest(
                             manufacturer = target.getString("manufacturer"),
                             model = target.getString("model"),
                             device = target.getString("device"),
+                            kernelRelease = target.getString("kernelRelease"),
                             buildDisplay = target.getString("buildDisplay"),
                             buildFingerprint = target.getString("buildFingerprint"),
                             sdk = target.getInt("sdk"),

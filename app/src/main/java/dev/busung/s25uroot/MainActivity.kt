@@ -188,7 +188,7 @@ private enum class AppPage(@StringRes val label: Int, val icon: ImageVector) {
 private data class LanguageOption(@StringRes val label: Int, val tag: String)
 
 private enum class CompatibilityWarning {
-    Device,
+    Kernel,
     Build,
 }
 
@@ -234,8 +234,8 @@ private fun RootApp(
                 selectedProfile = profile
                 showTargetPicker = false
                 compatibilityWarning = when {
-                    !profile.matchesModel(device) -> CompatibilityWarning.Device
-                    !profile.matches(device) -> CompatibilityWarning.Build
+                    !profile.matchesKernel(device) -> CompatibilityWarning.Kernel
+                    profile.buildDisplay != device.buildId -> CompatibilityWarning.Build
                     else -> null
                 }
                 if (compatibilityWarning == null) showInstallConfirmation = true
@@ -255,8 +255,8 @@ private fun RootApp(
                 DialogDimAmount(0.24f)
                 Text(
                     stringResource(
-                        if (warning == CompatibilityWarning.Device) {
-                            R.string.device_mismatch_title
+                        if (warning == CompatibilityWarning.Kernel) {
+                            R.string.kernel_mismatch_title
                         } else {
                             R.string.build_mismatch_title
                         },
@@ -265,8 +265,12 @@ private fun RootApp(
             },
             text = {
                 Text(
-                    if (warning == CompatibilityWarning.Device) {
-                        stringResource(R.string.device_mismatch_body, device.model, profile.model)
+                    if (warning == CompatibilityWarning.Kernel) {
+                        stringResource(
+                            R.string.kernel_mismatch_body,
+                            device.kernelRelease,
+                            profile.kernelRelease,
+                        )
                     } else {
                         stringResource(R.string.build_mismatch_body, device.buildId, profile.buildDisplay)
                     },
@@ -275,7 +279,10 @@ private fun RootApp(
             confirmButton = {
                 FilledTonalButton(
                     onClick = {
-                        if (warning == CompatibilityWarning.Device && !profile.matches(device)) {
+                        if (
+                            warning == CompatibilityWarning.Kernel &&
+                            profile.buildDisplay != device.buildId
+                        ) {
                             compatibilityWarning = CompatibilityWarning.Build
                         } else {
                             compatibilityWarning = null
@@ -896,11 +903,11 @@ private fun TargetSelectionSheet(
     onRetry: () -> Unit,
     onNext: (TargetProfile) -> Unit,
 ) {
-    var showOnlyMyModel by remember { mutableStateOf(true) }
+    var showOnlyMyKernel by remember { mutableStateOf(true) }
     var selectedProfileId by remember { mutableStateOf<String?>(null) }
-    val visibleProfiles = remember(catalog.profiles, showOnlyMyModel, device) {
-        if (showOnlyMyModel) {
-            catalog.profiles.filter { it.matchesModel(device) }
+    val visibleProfiles = remember(catalog.profiles, showOnlyMyKernel, device) {
+        if (showOnlyMyKernel) {
+            catalog.profiles.filter { it.matchesKernel(device) }
         } else {
             catalog.profiles
         }
@@ -930,11 +937,11 @@ private fun TargetSelectionSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .toggleable(
-                        value = showOnlyMyModel,
+                        value = showOnlyMyKernel,
                         role = Role.Checkbox,
                         onValueChange = { enabled ->
-                            showOnlyMyModel = enabled
-                            if (enabled && selectedProfile?.matchesModel(device) == false) {
+                            showOnlyMyKernel = enabled
+                            if (enabled && selectedProfile?.matchesKernel(device) == false) {
                                 selectedProfileId = null
                             }
                         },
@@ -943,8 +950,8 @@ private fun TargetSelectionSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Checkbox(checked = showOnlyMyModel, onCheckedChange = null)
-                Text(stringResource(R.string.show_my_model_only), style = MaterialTheme.typography.titleMedium)
+                Checkbox(checked = showOnlyMyKernel, onCheckedChange = null)
+                Text(stringResource(R.string.show_my_kernel_only), style = MaterialTheme.typography.titleMedium)
             }
 
             when {
@@ -965,7 +972,7 @@ private fun TargetSelectionSheet(
                     }
                 }
                 visibleProfiles.isEmpty() -> Text(
-                    stringResource(R.string.no_matching_devices),
+                    stringResource(R.string.no_matching_kernels),
                     modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -1002,11 +1009,11 @@ private fun TargetSelectionSheet(
                                 RadioButton(selected = selected, onClick = null)
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        "${profile.manufacturer} ${profile.model}",
+                                        profile.kernelRelease,
                                         style = MaterialTheme.typography.titleMedium,
                                     )
                                     Text(
-                                        profile.buildDisplay,
+                                        "${profile.manufacturer} ${profile.model} · ${profile.buildDisplay}",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
