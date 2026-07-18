@@ -24,26 +24,6 @@ The signed device feed and native payloads are maintained in
 The app requires an exact signed match for the manufacturer, model, device,
 full build display ID, full fingerprint, SDK, ABI, and page size.
 
-## Download model
-
-1. Resolve the current `main` commit of the payload repository.
-2. Download the support manifest and Ed25519 signature from that exact commit.
-3. Verify the signature with the public key pinned in the APK.
-4. Match the complete device profile.
-5. Download the exploit and KernelSU artifacts from the same immutable commit.
-
-Per-artifact SHA-256 fields are intentionally not used. The signed manifest
-and immutable Git commit are the trust and consistency boundaries.
-
-## Interface
-
-- Material 3 Expressive UI
-- Tonal Spot palettes generated with the Material Color Utilities 2025 spec
-- overview and settings navigation
-- system dynamic, blue, violet, green, and orange Material palettes
-- Korean, English, Japanese, and Simplified Chinese app languages
-- dedicated non-dismissible installation screen with live native logs
-
 ## Build
 
 Requirements:
