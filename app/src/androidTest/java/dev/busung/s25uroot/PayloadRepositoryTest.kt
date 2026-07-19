@@ -10,7 +10,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class PayloadRepositoryTest {
     @Test
-    fun signedManifestMatchesDeviceAndArtifactsDownload() {
+    fun manifestMatchesDeviceAndArtifactsDownload() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
         val repository = PayloadRepository(context)
         val snapshot = DeviceSnapshot.current()

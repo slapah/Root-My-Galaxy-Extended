@@ -11,8 +11,8 @@ android {
         applicationId = "dev.busung.s25uroot"
         minSdk = 33
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.2.2"
+        versionCode = 8
+        versionName = "0.2.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
@@ -70,7 +70,6 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.5.0-alpha24")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("com.materialkolor:material-kolor:4.1.1")
-    implementation("net.i2p.crypto:eddsa:0.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")

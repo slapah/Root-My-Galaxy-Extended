@@ -2,7 +2,6 @@ package dev.busung.s25uroot
 
 import android.content.Context
 import android.system.Os
-import android.util.Base64
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -20,13 +19,6 @@ class PayloadRepository(private val context: Context) {
     fun loadTargets(): List<TargetProfile> {
         val commit = resolveMainCommit()
         val manifestBytes = downloadBytes(rawUrl(commit, "support/targets-v2.json"), MAX_MANIFEST_BYTES)
-        val signatureBytes = Base64.decode(
-            downloadBytes(rawUrl(commit, "support/targets-v2.sig"), MAX_SIGNATURE_BYTES)
-                .toString(Charsets.US_ASCII)
-                .trim(),
-            Base64.DEFAULT,
-        )
-        verifyManifest(manifestBytes, signatureBytes)
         return SupportManifest.parse(manifestBytes).targets.map { profile -> profile.copy(
             exploit = profile.exploit.copy(url = pinArtifactUrl(profile.exploit.url, commit)),
             kernelSu = profile.kernelSu.copy(
@@ -102,13 +94,6 @@ class PayloadRepository(private val context: Context) {
         return destination
     }
 
-    private fun verifyManifest(manifest: ByteArray, signatureBytes: ByteArray) {
-        val publicKey = Base64.decode(PUBLIC_KEY_RAW_BASE64, Base64.DEFAULT)
-        require(Ed25519Verifier.verify(publicKey, manifest, signatureBytes)) {
-            context.getString(R.string.repo_signature_failed)
-        }
-    }
-
     private fun resolveMainCommit(): String {
         val response = downloadBytes(COMMIT_API_URL, MAX_COMMIT_RESPONSE_BYTES)
         val commit = JSONObject(response.toString(Charsets.UTF_8))
@@ -160,10 +145,7 @@ class PayloadRepository(private val context: Context) {
         private const val RAW_REPOSITORY =
             "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads"
         private const val MUTABLE_RAW_PREFIX = "$RAW_REPOSITORY/main/"
-        private const val PUBLIC_KEY_RAW_BASE64 =
-            "hg+mmLH+UL+RvioXW6+o34dtZ+3uxvj0Hx4EaQt4B08="
         private const val MAX_COMMIT_RESPONSE_BYTES = 16 * 1024
         private const val MAX_MANIFEST_BYTES = 256 * 1024
-        private const val MAX_SIGNATURE_BYTES = 1024
     }
 }
