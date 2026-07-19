@@ -268,8 +268,8 @@ private fun RootApp(
                     if (warning == CompatibilityWarning.Kernel) {
                         stringResource(
                             R.string.kernel_mismatch_body,
-                            device.kernelVersion,
-                            profile.kernelVersion,
+                            device.kernelBuildVersion,
+                            profile.kernelBuildVersion,
                         )
                     } else {
                         stringResource(R.string.build_mismatch_body, device.buildId, profile.buildDisplay)
