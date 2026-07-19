@@ -13,8 +13,10 @@ class PayloadRepositoryTest {
     fun signedManifestMatchesDeviceAndArtifactsDownload() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
         val repository = PayloadRepository(context)
-        val profile = repository.resolveTarget(DeviceSnapshot.current())
-        assertEquals("pa3q-S938NKSUACZF1", profile.profileId)
+        val snapshot = DeviceSnapshot.current()
+        val profile = repository.resolveTarget(snapshot)
+        assertEquals(snapshot.kernelRelease, profile.kernelRelease)
+        assertEquals(snapshot.kernelBuildVersion, profile.kernelBuildVersion)
 
         val payloads = repository.download(profile) { }
         assertEquals(profile.exploit.size, payloads.exploit.length())

@@ -109,7 +109,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                     profiles = repository.loadTargets().sortedWith(
                         compareBy(
                             TargetProfile::kernelRelease,
-                            TargetProfile::kernelVersion,
+                            TargetProfile::kernelBuildVersion,
                             TargetProfile::model,
                             TargetProfile::buildDisplay,
                         ),
