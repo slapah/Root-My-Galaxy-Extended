@@ -8,6 +8,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.KeyFactory
+import java.security.Signature
+import java.security.spec.X509EncodedKeySpec
 import org.json.JSONObject
 
 data class VerifiedPayloads(
@@ -103,10 +106,13 @@ class PayloadRepository(private val context: Context) {
     }
 
     private fun verifyManifest(manifest: ByteArray, signatureBytes: ByteArray) {
-        val publicKey = Base64.decode(PUBLIC_KEY_RAW_BASE64, Base64.DEFAULT)
-        require(Ed25519Verifier.verify(publicKey, manifest, signatureBytes)) {
-            context.getString(R.string.repo_signature_failed)
-        }
+        val publicKey = KeyFactory.getInstance("Ed25519").generatePublic(
+            X509EncodedKeySpec(Base64.decode(PUBLIC_KEY_BASE64, Base64.DEFAULT)),
+        )
+        val verifier = Signature.getInstance("Ed25519")
+        verifier.initVerify(publicKey)
+        verifier.update(manifest)
+        require(verifier.verify(signatureBytes)) { context.getString(R.string.repo_signature_failed) }
     }
 
     private fun resolveMainCommit(): String {
@@ -160,8 +166,8 @@ class PayloadRepository(private val context: Context) {
         private const val RAW_REPOSITORY =
             "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads"
         private const val MUTABLE_RAW_PREFIX = "$RAW_REPOSITORY/main/"
-        private const val PUBLIC_KEY_RAW_BASE64 =
-            "hg+mmLH+UL+RvioXW6+o34dtZ+3uxvj0Hx4EaQt4B08="
+        private const val PUBLIC_KEY_BASE64 =
+            "MCowBQYDK2VwAyEAhg+mmLH+UL+RvioXW6+o34dtZ+3uxvj0Hx4EaQt4B08="
         private const val MAX_COMMIT_RESPONSE_BYTES = 16 * 1024
         private const val MAX_MANIFEST_BYTES = 256 * 1024
         private const val MAX_SIGNATURE_BYTES = 1024
