@@ -10,7 +10,7 @@ from device offsets, native exploit payloads, and KernelSU build artifacts.
 
 [Latest release](https://github.com/BuSung-dev/Root-My-Galaxy/releases)
 
-The signed device feed and native payloads are maintained in
+The device feed and native payloads are maintained in
 [Root-My-Galaxy-Payloads](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads).
 
 ## Application
@@ -20,7 +20,7 @@ The signed device feed and native payloads are maintained in
 <img width="200" alt="KakaoTalk_20260718_171127319" src="https://github.com/user-attachments/assets/8dde0443-12cf-4058-ba76-0337aefb92a0" />
 <img width="200" alt="KakaoTalk_20260718_171030202" src="https://github.com/user-attachments/assets/f656e8af-60a6-4fcb-a3db-d4232bede613" />
 
-The app automatically selects an exact signed match for the kernel release,
+The app automatically selects an exact match for the kernel release,
 full build display ID, SDK, ABI, and page size. Advanced mode can select a
 profile manually and presents separate kernel-release and build warnings.
 
