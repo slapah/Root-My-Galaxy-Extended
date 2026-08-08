@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+import com.android.build.api.dsl.ApplicationExtension
+
 android {
     namespace = "dev.busung.s25uroot"
     compileSdk = 37
@@ -46,6 +48,16 @@ android {
     packaging {
         jniLibs.useLegacyPackaging = true
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    }
+}
+
+val androidExtension = extensions.getByType<ApplicationExtension>()
+
+tasks.register("printVersionName") {
+    group = "help"
+    description = "Prints the application version name from defaultConfig."
+    doLast {
+        println(androidExtension.defaultConfig.versionName ?: "")
     }
 }
 
