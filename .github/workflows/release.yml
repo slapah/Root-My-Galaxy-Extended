@@ -55,7 +55,7 @@ jobs:
           set -euo pipefail
 
           git fetch --tags --force
-          VERSION_NAME="$(./gradlew -q :app:printVersionName --no-daemon)"
+          VERSION_NAME="$(grep -oE 'versionName[[:space:]]*=[[:space:]]*"[^"]+"' app/build.gradle.kts | head -n 1 | cut -d'"' -f2)"
           EXPECTED_TAG="v$VERSION_NAME"
 
           if [ -n "$INPUT_TAG_NAME" ]; then
