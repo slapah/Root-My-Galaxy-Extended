@@ -12,7 +12,7 @@ concurrency:
 
 env:
   RELEASE_SERIES: "0.3"
-  PAYLOAD_REPO: "igorcv88/Root-My-Galaxy-Payloads-S938B"
+  PAYLOAD_REPO: "slapah/Root-My-Galaxy-Payloads"
 
 jobs:
   release:
@@ -64,7 +64,7 @@ jobs:
             echo "RELEASE_TAG=$RELEASE_TAG"
           } >> "$GITHUB_ENV"
 
-      - name: Sincronizar root helper do payload CZG3
+      - name: Sincronizar root helper do payload h8q
         run: |
           set -euo pipefail
 
@@ -101,10 +101,10 @@ jobs:
 
           targets = [
               target for target in manifest.get("payloads", [])
-              if target.get("payloadId") == "pa3q-S938BXXSBCZG3"
+              if target.get("payloadId") == "h8q-F971USQU1AZFW"
           ]
           if len(targets) != 1:
-              raise SystemExit("Expected exactly one CZG3 v3 payload entry")
+              raise SystemExit("Expected exactly one h8q v3 payload entry")
           target = targets[0]
           helper = target.get("rootHelper")
           exploit_url = target.get("exploit", {}).get("url", "")
@@ -116,25 +116,15 @@ jobs:
               raise SystemExit(f"Bundled root helper is missing: {destination}")
 
           if helper is None:
-              # Transitional compatibility: v0265 predates rootHelper metadata.
-              # A v0266 feed without metadata is an invalid partial publication.
-              if "-v0266/" in exploit_url:
-                  raise SystemExit("CZG3 v0266 feed is missing rootHelper metadata")
-              data = destination.read_bytes()
-              digest = hashlib.sha256(data).hexdigest()
-              print(
-                  "Payload feed has no rootHelper metadata (v0265 transition); "
-                  "preserving the helper committed in the app"
-              )
-              synced = "false"
+              raise SystemExit("h8q feed is missing rootHelper metadata")
           else:
               mutable_prefix = f"https://raw.githubusercontent.com/{repo}/main/"
               url = helper.get("url", "")
               if not url.startswith(mutable_prefix):
                   raise SystemExit(f"Unexpected rootHelper URL: {url}")
               path = url.removeprefix(mutable_prefix)
-              if not path.startswith("artifacts/pa3q-S938BXXSBCZG3-v0266/"):
-                  raise SystemExit(f"Unexpected CZG3 rootHelper path: {path}")
+              if not path.startswith("artifacts/h8q-F971USQU1AZFW-v0001/"):
+                  raise SystemExit(f"Unexpected h8q rootHelper path: {path}")
 
               source = checkout / path
               if not source.is_file():
