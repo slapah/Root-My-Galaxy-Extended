@@ -18,11 +18,11 @@ data class UpdateInfo(
     val releaseUrl: String,
 )
 
-const val ROOT_MY_GALAXY_URL = "https://github.com/igorcv88/Root-My-Galaxy-S938B"
+const val ROOT_MY_GALAXY_URL = "https://github.com/slapah/Root-My-Galaxy-Extended"
 
 object AppUpdater {
 
-    private const val GITHUB_API = "https://api.github.com/repos/igorcv88/Root-My-Galaxy-S938B"
+    private const val GITHUB_API = "https://api.github.com/repos/slapah/Root-My-Galaxy-Extended"
     private const val RELEASES_PAGE = "$ROOT_MY_GALAXY_URL/releases/latest"
 
     suspend fun fetchLatestRelease(): UpdateInfo? = withContext(Dispatchers.IO) {
