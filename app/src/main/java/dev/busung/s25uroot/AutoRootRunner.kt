@@ -537,7 +537,14 @@ internal class AutoRootRunner(
             "/system/bin/mv -f \"\$tmp\" $KSUD_PATH; " +
             "tmp='$KSUD_STAGE_REFRESH_PATH'; rm -f \"\$tmp\"; " +
             "/system/bin/cp $source \"\$tmp\"; /system/bin/chmod 755 \"\$tmp\"; " +
-            "/system/bin/mv -f \"\$tmp\" $KSUD_STAGE_PATH"
+            "/system/bin/mv -f \"\$tmp\" $KSUD_STAGE_PATH; " +
+            // Pre-stage the helper's promote target too. The late-load role runs
+            // in vendor_modprobe, which can write an existing shell_data_file in
+            // /data/local/tmp but is denied CREATE there — so /data/local/tmp/ksud
+            // must already exist for the promote to land (see roothelper copy_file).
+            "tmp='$KSUD_PROMOTE_REFRESH_PATH'; rm -f \"\$tmp\"; " +
+            "/system/bin/cp $source \"\$tmp\"; /system/bin/chmod 755 \"\$tmp\"; " +
+            "/system/bin/mv -f \"\$tmp\" $KSUD_PROMOTE_PATH"
     }
 
     private suspend fun logKernelSuAutoStage(
@@ -690,8 +697,10 @@ internal class AutoRootRunner(
         private const val P0_OFFSET_MASK = 0xffffL
         private const val KSUD_PATH = "/data/local/tmp/ksud-s25u-kdp"
         private const val KSUD_STAGE_PATH = "/data/local/tmp/.ksud-stage"
+        private const val KSUD_PROMOTE_PATH = "/data/local/tmp/ksud"
         private const val KSUD_REFRESH_PATH = "/data/local/tmp/.ksud-refresh"
         private const val KSUD_STAGE_REFRESH_PATH = "/data/local/tmp/.ksud-stage-refresh"
+        private const val KSUD_PROMOTE_REFRESH_PATH = "/data/local/tmp/.ksud-promote-refresh"
         private const val SHELL_LOG_PATH = "/data/local/tmp/autoroot-exploit.log"
         private const val SHELL_HELPER_PATH = "/data/local/tmp/autoroot-helper"
         private const val SHELL_PAYLOAD_PATH = "/data/local/tmp/autoroot-payload"
