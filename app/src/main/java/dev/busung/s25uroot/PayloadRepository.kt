@@ -224,7 +224,7 @@ class PayloadRepository(private val context: Context) {
 
     companion object {
         private const val OFFLINE_REQUEST_PREFIX = "offline-cache:"
-        private const val PAYLOAD_REPOSITORY = "igorcv88/Root-My-Galaxy-Payloads-S938B"
+        private const val PAYLOAD_REPOSITORY = "slapah/Root-My-Galaxy-Payloads"
         private const val COMMIT_API_URL =
             "https://api.github.com/repos/$PAYLOAD_REPOSITORY/git/ref/heads/main"
         private const val RAW_REPOSITORY =
