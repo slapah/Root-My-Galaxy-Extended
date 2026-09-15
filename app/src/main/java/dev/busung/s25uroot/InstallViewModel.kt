@@ -395,6 +395,24 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         if (transport == ManualRunTransport.App) {
             require(helper.canExecute()) { app.getString(R.string.error_helper_unavailable) }
         }
+        /* The root helper runs in a restricted vendor domain that CANNOT read
+         * this app's private files (observed on h8q: EPERM opening
+         * files/ksu-bootstrap/ksud-s25u-kdp as u:r:vendor_modprobe). Stage the
+         * verified ksud to /data/local/tmp through the shell transport — the
+         * helper's first candidate path — so the bootstrap promotion is legal. */
+        runCatching {
+            val ksud = KernelSuBootstrapStore.stagedFile(app)
+            if (ksud.isFile) {
+                when (transport) {
+                    ManualRunTransport.Shizuku -> shizukuStage(ksud, SHIZUKU_KSUD_PATH, "755")
+                    ManualRunTransport.LocalAdb -> activeLocalAdbSession?.push(
+                        ksud, SHIZUKU_KSUD_PATH, executable = true,
+                    )
+                    ManualRunTransport.App -> Unit
+                }
+                appendLog("[*] KernelSU bootstrap staged to $SHIZUKU_KSUD_PATH")
+            }
+        }.onFailure { appendLog("[!] KernelSU bootstrap shell staging failed: ${it.message}") }
         val process = if (transport == ManualRunTransport.Shizuku) {
             val stagedPayload = shizukuStage(payload, SHIZUKU_PAYLOAD_PATH, "755")
             ShizukuController.exec(

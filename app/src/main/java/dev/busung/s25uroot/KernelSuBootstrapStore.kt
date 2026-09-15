@@ -20,6 +20,9 @@ internal object KernelSuBootstrapStore {
     private const val DIRECTORY = "ksu-bootstrap"
     const val FILE_NAME = "ksud-s25u-kdp"
 
+    /** The verified copy in app-private storage (present after [prepare]). */
+    fun stagedFile(context: Context): File = File(File(context.filesDir, DIRECTORY), FILE_NAME)
+
     @Synchronized
     fun prepare(context: Context, payloads: VerifiedPayloads): File {
         val artifact = payloads.profile.kernelSu.artifact
